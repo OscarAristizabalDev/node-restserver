@@ -5,12 +5,18 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../models/usuario');
+const { verificarToken, verificarRoleAdmin } = require('../middlewares/autenticacion');
 
 const app = express();
 /**
  * 
  */
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificarToken, (req, res) => {
+
+    /**return res.json({
+        // de esta forma puede obtener el usuario que realiza la petición
+        usuario: req.usuario,
+    })*/
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -47,7 +53,7 @@ app.get('/usuario', function(req, res) {
 /**
  * 
  */
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificarToken, verificarRoleAdmin], (req, res) => {
 
     let body = req.body;
 
@@ -83,7 +89,7 @@ app.post('/usuario', function(req, res) {
 /**
  * 
  */
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificarToken, verificarRoleAdmin], (req, res) => {
 
     let id = req.params.id;
     // medieante undercore mediante la funcion pick el cual recibe un objeto
@@ -131,7 +137,7 @@ app.put('/usuario/:id', function(req, res) {
 /**
  * Recibe el id a borrar
  */
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificarToken, verificarRoleAdmin], (req, res) => {
 
     //se obtiene el id del registro a borrar
     let id = req.params.id;
