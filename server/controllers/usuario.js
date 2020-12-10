@@ -36,7 +36,7 @@ app.get('/usuario', verificarToken, (req, res) => {
                     error: err
                 });
             }
-
+            // Se realiza el conteo de los usuario activos
             Usuario.count({ estado: true }, (err, conteo) => {
                 res.json({
                     status: 200,
@@ -129,9 +129,7 @@ app.put('/usuario/:id', [verificarToken, verificarRoleAdmin], (req, res) => {
             mensaje: 'Usuario actualizado correctamente',
             usuario: usuarioDB
         });
-    })
-
-
+    });
 });
 
 /**
@@ -143,15 +141,15 @@ app.delete('/usuario/:id', [verificarToken, verificarRoleAdmin], (req, res) => {
     let id = req.params.id;
     let updateEstado = {
         estado: false
-    };;
+    }
 
     Usuario.findByIdAndUpdate(id, updateEstado, { new: true }, (err, usuarioActualizar) => {
         if (err) {
-            return res.status(400).json({
-                status: 400,
+            return res.status(500).json({
+                status: 500,
                 error: err
             });
-        };
+        }
 
         if (!usuarioActualizar) {
             return res.status(400).json({
