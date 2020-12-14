@@ -54,7 +54,38 @@ let verificarRoleAdmin = (req, res, next) => {
 
 };
 
+/**
+ * Permite verificar para imagen
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+let verificarTokenImg = (req, res, next) => {
+
+    // Se obtiene el token enviado por la url
+    let token = req.query.token;
+
+    // función que permite valider que el token enviado sea valido
+    jwt.verify(token, process.env.SEED, (err, decoded) => {
+        // En caso de no ser valido se retorna un error de Authorizacion
+        if (err) {
+            return res.status(401).json({
+                status: 401,
+                err: {
+                    message: 'Token no válido'
+                }
+            })
+        };
+        // Si el token es correcto, se da next para que el proceso continue
+        req.usuario = decoded.usuario;
+        next();
+    });
+
+}
+
+
 module.exports = {
     verificarToken,
-    verificarRoleAdmin
+    verificarRoleAdmin,
+    verificarTokenImg
 }
